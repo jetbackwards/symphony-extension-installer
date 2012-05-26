@@ -7,7 +7,6 @@ require_once(TOOLKIT . '/class.sectionmanager.php');
 require_once(TOOLKIT . '/class.fieldmanager.php');
 require_once(TOOLKIT . '/class.entrymanager.php');
 require_once(TOOLKIT . '/class.entry.php');
-require_once(EXTENSIONS . '/importcsv/lib/parsecsv-0.3.2/parsecsv.lib.php');
 require_once(EXTENSIONS . '/extension_installer/lib/extension-data.class.php');
 
 require_once(TOOLKIT . '/class.datasource.php');
