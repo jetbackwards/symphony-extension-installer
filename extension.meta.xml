@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="symphony-extension-installer" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Extension Installer</name>
+	<description>Install extensions directly from the Symphony Admin interface.</description>
+	<repo type="github">https://github.com/jetbackwards/symphony-extension-installer</repo>
+	<url type="discuss">http://symphony-cms.com/discuss/thread/88402/</url>
+	<types />
+	<authors>
+		<author>
+			<name github="jetbackwards" symphony="jetbackwards">Tom Johnson</name>
+		</author>
+	</authors>
+	<releases>
+		<release version="1.0" date="2012-05-26" min="2.2.5" />
+	</releases>
+</extension>
