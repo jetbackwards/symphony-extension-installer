@@ -21,14 +21,42 @@
 				text-decoration: none;
 				color: #000;
 			}
+			
+			div.search {
+				float: right;
+				margin: 0px;
+			}
+			div.search fieldset {
+				margin: -5px;
+				padding: 0px;
+			}
+			div.search input[type=text] {
+				width: 150px;
+				margin-right: 5px;
+			}
+			div.search input[type=submit] {
+				width: 60px;
+			}
+			
 		</style>
 			
-		<h2>Install Extensions - Page <xsl:value-of select="//extension-list/response/extensions/pagination/@current-page"/> of <xsl:value-of select="//extension-list/response/extensions/pagination/@total-pages"/>
+		<h2>Install Extensions - 
+			<xsl:if test="//extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
+				Searching For'<xsl:value-of select="//extension-list/response/parameters/parameter[@name = 'keywords']/@value"/>' - 
+			</xsl:if>
 		
-		<div class="paging">
-			<xsl:call-template name="page">
-				<xsl:with-param name="pages-to-render" select="extensions/pagination/@total-pages - 1"/>
-			</xsl:call-template>
+		Page <xsl:value-of select="//extension-list/response/extensions/pagination/@current-page"/> of <xsl:value-of select="//extension-list/response/extensions/pagination/@total-pages"/>
+		
+		<div class="search">
+			<form method="post" action="http://127.0.0.1/devjet2/symphony/extension/extension_installer/">
+				<fieldset class="insert">
+					<label>
+						<input type="text" value="{//extension-list/response/parameters/parameter[@name = 'keywords']/@value}" name="s" id="s"/>
+						<input type="submit" value="Search" name="submit" id="submit"/>					
+					</label>
+				</fieldset>
+
+			</form>
 		</div>
 		</h2>		
 		
@@ -81,7 +109,12 @@
 				<a href="#" class="nolink"><xsl:value-of select="$current-page"/></a>
 			</xsl:when>
 			<xsl:otherwise>
-				<a href="?p={$current-page}"><xsl:value-of select="$current-page"/></a>		
+				<xsl:variable name="cur-keywords">
+					<xsl:if test="//extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
+						s=<xsl:value-of select="//extension-list/response/parameters/parameter[@name = 'keywords']/@value"/>&amp;
+					</xsl:if>
+				</xsl:variable>
+				<a href="?{$cur-keywords}p={$current-page}"><xsl:value-of select="$current-page"/></a>		
 			</xsl:otherwise>
 		</xsl:choose>
 

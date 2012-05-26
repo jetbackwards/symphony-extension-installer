@@ -5,7 +5,7 @@
 	Class datasourceextension_list extends Datasource{
 
 		public $dsParamROOTELEMENT = 'extension-list';
-		public $dsParamURL = 'http://symphonyextensions.com/api/extensions?page=';
+		public $dsParamURL = 'http://symphonyextensions.com/api/extensions';
 		public $dsParamXPATH = '/';
 		public $dsParamCACHE = '0';
 		public $dsParamTIMEOUT = '6';
@@ -17,9 +17,31 @@
 		public function __construct(&$parent, $env=NULL, $process_params=true){
 			parent::__construct($parent, $env, $process_params);
 			$this->_dependencies = array();
-			$this->dsParamURL .= $_GET['p'];
+			
+			$urlParams = array();
+
+			
+			if(isset($_REQUEST['s'])) {
+				$urlParams["keywords"] = $_REQUEST['s'];
+			}
+			
+			if(isset($_REQUEST['p'])) {
+				$urlParams["page"] = $_REQUEST['p'];
+			}
+
+			
+			$paramStr = "";
+			foreach($urlParams as $k => $v) {
+				$paramStr .= $k . "=" . $v . "&";
+			}
+			$paramStr = substr($paramStr, 0, strlen($paramStr) - 1);
+			
+			$this->dsParamURL .= "?" . $paramStr;
 		}
 
+		
+		
+		
 		public function about(){
 			return array(
 				'name' => 'Symphony Extension List',

@@ -45,6 +45,7 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 
     public function view()
     {
+		//print_r($_REQUEST);
 		$this->__indexPage();
     }
 	
@@ -55,7 +56,7 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 		$xml = $extList->grab();
 		
 		if(isset($_GET['debug'])) {
-		echo($xml->generate());
+			echo($xml->generate());
 		}
 		$xslt = new XSLTPage();
         $xslt->setXML($xml->generate());

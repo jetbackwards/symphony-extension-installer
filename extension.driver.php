@@ -4,7 +4,7 @@ Class extension_extension_installer extends Extension{
 	
 	public function about() {
 		return array('name' => 'Extension Installer',
-					 'version' => '0.1',
+					 'version' => '0.8',
 					 'release-date' => '2012-05-25',
 					 'author' => array('name' => 'Tom Johnson',
 									   'website' => 'http://www.devjet.co.uk',
