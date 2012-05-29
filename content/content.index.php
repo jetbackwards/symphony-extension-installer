@@ -16,7 +16,7 @@ require_once(CORE . '/class.cacheable.php');
 require_once(CORE . '/class.administration.php');
 
 require_once(EXTENSIONS . '/extension_installer/data-sources/data.extension_list.php');
-
+require_once(EXTENSIONS . '/extension_installer/data-sources/data.downloaded_extensions.php');
 
 
 class contentExtensionExtension_installerIndex extends AdministrationPage
@@ -50,18 +50,36 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 	
 	private function __indexPage() {
 		
+		if(isset($_GET['id'])) {
+			if(!isset($_GET['err'])) {
+				$this->pageAlert("Install of " . urldecode($_GET['name']) . " failed.", Alert::ERROR);
+			}
+			else {
+				$this->pageAlert(urldecode($_GET['name']) . " was successfully installed!", Alert::SUCCESS);
+			}
+		}
+		
 		$extList = new datasourceextension_list(Administration::instance(), array());
+		$extListXml = $extList->grab();
+		
+		$downList = new datasourcedownloaded_extensions(Administration::instance(), array());
+		$downListXml = $downList->grab();
 
-		$xml = $extList->grab();
+		$xmlRoot = new XMLElement('root');
+		$xmlRoot->appendChild($extListXml);
+		$xmlRoot->appendChild($downListXml);
 		
 		if(isset($_GET['debug'])) {
-			echo($xml->generate());
+			//echo($xmlRoot->generate());
 		}
+		
 		$xslt = new XSLTPage();
-        $xslt->setXML($xml->generate());
+        $xslt->setXML($xmlRoot->generate());
+		//echo($xmlRoot->generate());
 		$xslt->setXSL(EXTENSIONS . '/extension_installer/content/index.xsl', true);
         $this->Form->setValue($xslt->generate());
-		print_r($xslt->getError());
+		//print_r($xslt->getError());
+		
 	}
 	
 	private function getExtensionUrls() {

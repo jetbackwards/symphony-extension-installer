@@ -3,7 +3,7 @@
 
 	<xsl:include href="extensions/extension_installer/utilities/pagination.xsl" />
 
-    <xsl:template match="//extension-list/response">
+    <xsl:template match="//root/extension-list/response">
 	
 		<style>
 			div.paging {
@@ -38,20 +38,26 @@
 				width: 60px;
 			}
 			
+			table.selectable td {
+				padding-bottom: 10px;
+				vertical-align: center;
+			}
+			
+			
 		</style>
 			
 		<h2>Install Extensions - 
-			<xsl:if test="//extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
+			<xsl:if test="//root/extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
 				Searching For'<xsl:value-of select="//extension-list/response/parameters/parameter[@name = 'keywords']/@value"/>' - 
 			</xsl:if>
 		
-		Page <xsl:value-of select="//extension-list/response/extensions/pagination/@current-page"/> of <xsl:value-of select="//extension-list/response/extensions/pagination/@total-pages"/>
+		Page <xsl:value-of select="//root/extension-list/response/extensions/pagination/@current-page"/> of <xsl:value-of select="//root/extension-list/response/extensions/pagination/@total-pages"/>
 		
 		<div class="search">
 			<form method="post" action="http://127.0.0.1/devjet2/symphony/extension/extension_installer/">
 				<fieldset class="insert">
 					<label>
-						<input type="text" value="{//extension-list/response/parameters/parameter[@name = 'keywords']/@value}" name="s" id="s"/>
+						<input type="text" value="{//root/extension-list/response/parameters/parameter[@name = 'keywords']/@value}" name="s" id="s"/>
 						<input type="submit" value="Search" name="submit" id="submit"/>					
 					</label>
 				</fieldset>
@@ -59,7 +65,17 @@
 			</form>
 		</div>
 		</h2>		
-		
+		<script>
+			jQuery(document).ready(function() {
+				jQuery(".expander-item").hide();
+			
+				jQuery(".expander-link").toggle(function() {
+					jQuery("#desc-" + jQuery(this).attr("id")).show();
+				}, function() {
+					jQuery("#desc-" + jQuery(this).attr("id")).hide();
+				});		
+			});	
+		</script>
 		<table class="selectable">
 			<thead>
 				<tr>
@@ -71,16 +87,42 @@
 			</thead>
 			<tbody>
 				<xsl:for-each select="extensions/extension">
+					<xsl:variable name="name" select="name"/>
+					<xsl:variable name="dev" select="developer/username"/>
+					<xsl:variable name="id" select="@id"/>				
 					<tr>
-						<td><xsl:value-of select="name"/></td>
-						<td><xsl:value-of select="developer/name"/></td>
-						<td><xsl:value-of select="version"/></td>
-						<xsl:variable name="name" select="name"/>
-						<xsl:variable name="dev" select="developer/username"/>
-						<xsl:variable name="id" select="@id"/>
+						<td><a href="#" id="{$id}" class="expander-link"><xsl:value-of select="name"/></a></td>
 						<td>
-							<a href="installer/?dev={$dev}&amp;id={$id}&amp;title={$name}">Install</a>
+							<xsl:choose>
+								<xsl:when test="developer/name">
+									<xsl:value-of select="developer/name"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="developer/username"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</td>
+						<td><xsl:value-of select="version"/></td>
+
+						<td>
+							<xsl:choose>
+								<xsl:when test="//root/downloaded-extensions[extension-item/@id = $id]">
+									Extension Installed
+								</xsl:when>
+								<xsl:otherwise>
+									<a href="installer/?dev={$dev}&amp;id={$id}&amp;title={$name}">Install</a>
+								</xsl:otherwise>
+							</xsl:choose>
+							
 						</td>				
+					</tr>
+					<tr class="expander-item" id="desc-{$id}">
+						<td colspan="4">
+							<div style="clear:both;">
+								<h3>Description</h3>
+								<xsl:copy-of select="description"/>
+							</div>
+						</td>
 					</tr>
 				</xsl:for-each>
 				
@@ -101,31 +143,30 @@
 	<xsl:template name="page">
 		<xsl:param name="pages-to-render"/>
 
-		<xsl:variable name="total-pages" select="//extension-list/response/extensions/pagination/@total-pages"/>
+		<xsl:variable name="total-pages" select="//root/extension-list/response/extensions/pagination/@total-pages"/>
 		<xsl:variable name="current-page" select="$total-pages - $pages-to-render"/>
 
 		<xsl:choose>
-			<xsl:when test="$current-page = //extension-list/response/extensions/pagination/@current-page">
+			<xsl:when test="$current-page = //root/extension-list/response/extensions/pagination/@current-page">
 				<a href="#" class="nolink"><xsl:value-of select="$current-page"/></a>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:variable name="cur-keywords">
-					<xsl:if test="//extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
-						s=<xsl:value-of select="//extension-list/response/parameters/parameter[@name = 'keywords']/@value"/>&amp;
+					<xsl:if test="//root/extension-list/response/parameters/parameter[@name = 'keywords']/@value != ''">
+						s=<xsl:value-of select="//root/extension-list/response/parameters/parameter[@name = 'keywords']/@value"/>&amp;
 					</xsl:if>
 				</xsl:variable>
 				<a href="?{$cur-keywords}p={$current-page}"><xsl:value-of select="$current-page"/></a>		
 			</xsl:otherwise>
 		</xsl:choose>
 
-		
 		<xsl:if test="$pages-to-render &gt; 0">
 			<xsl:variable name="pages-left" select="$pages-to-render - 1"/>
 			<xsl:call-template name="page">
 				<xsl:with-param name="pages-to-render" select="$pages-left"/>
 			</xsl:call-template>
 		</xsl:if>
-		
+	
 	</xsl:template>	
 		
 </xsl:stylesheet>

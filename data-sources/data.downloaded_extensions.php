@@ -2,59 +2,29 @@
 
 	require_once(TOOLKIT . '/class.datasource.php');
 
-	Class datasourceextension_list extends Datasource{
+	Class datasourcedownloaded_extensions extends Datasource{
 
-		public $dsParamROOTELEMENT = 'extension-list';
-		public $dsParamURL = 'http://symphonyextensions.com/api/extensions';
-		public $dsParamXPATH = '/';
-		public $dsParamCACHE = '0';
-		public $dsParamTIMEOUT = '6';
-
-		
-
-		
+		public $dsParamROOTELEMENT = 'downloaded-extensions';
 
 		public function __construct(&$parent, $env=NULL, $process_params=true){
 			parent::__construct($parent, $env, $process_params);
 			$this->_dependencies = array();
-			
-			$urlParams = array();
-
-			
-			if(isset($_REQUEST['s'])) {
-				$urlParams["keywords"] = $_REQUEST['s'];
-			}
-			
-			if(isset($_REQUEST['p'])) {
-				$urlParams["page"] = $_REQUEST['p'];
-			}
-
-			
-			$paramStr = "";
-			foreach($urlParams as $k => $v) {
-				$paramStr .= $k . "=" . $v . "&";
-			}
-			$paramStr = substr($paramStr, 0, strlen($paramStr) - 1);
-			
-			$this->dsParamURL .= "?" . $paramStr;
 		}
 
-		
-		
-		
 		public function about(){
 			return array(
-				'name' => 'Symphony Extension List',
+				'name' => 'Downloaded Extensions',
 				'author' => array(
 					'name' => 'Thomas Johnson',
-					'website' => 'www.devjet.co.uk',
+					'website' => 'http://127.0.0.1/devjet2',
 					'email' => 'jetbackwards@gmail.com'),
-				'release-date' => '2012-05-25T20:41:00+00:00'
+				'version' => 'Symphony 2.2.5',
+				'release-date' => '2012-05-29T09:35:05+00:00'
 			);
 		}
 
 		public function getSource(){
-			return 'dynamic_xml';
+			return 'static_xml';
 		}
 
 		public function allowEditorToParse(){
@@ -65,7 +35,20 @@
 			$result = new XMLElement($this->dsParamROOTELEMENT);
 
 			try{
-				include(TOOLKIT . '/data-sources/datasource.dynamic_xml.php');
+				
+				if ($handle = opendir(EXTENSIONS)) {
+					while (false !== ($entry = readdir($handle))) {
+						if ($entry != "." && $entry != "..") {
+							
+							$this->dsSTATIC .= "<extension-item id='{$entry}'/>";
+							
+						}
+					}
+					closedir($handle);
+				}
+				
+				
+				include(TOOLKIT . '/data-sources/datasource.static.php');
 			}
 			catch(FrontendPageNotFoundException $e){
 				// Work around. This ensures the 404 page is displayed and
@@ -78,6 +61,8 @@
 			}
 
 			if($this->_force_empty_result) $result = $this->emptyXMLSet();
+
+			
 
 			return $result;
 		}

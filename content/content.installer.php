@@ -62,10 +62,13 @@ class contentExtensionExtension_installerInstaller extends AdministrationPage
 		$resultMessage = $theExt['title'] . " was installed successfully!";
 		
 		// download the file to $root/manifest/tmp
-		$fileContents = file_get_contents("https://github.com/{$theExt['dev']}/{$theExt['id']}/zipball/master");
+		@$fileContents = file_get_contents("https://github.com/{$theExt['dev']}/{$theExt['id']}/zipball/master");
 		if(!$fileContents) {
 			$resultSuccess = 0;
 			$resultMessage = $theExt['title'] . " could not be downloaded.";
+			// fatal error
+			$this->__showOutput($resultSuccess, $resultMessage);
+			//die();
 		}
 		$zipFilePath = MANIFEST . '/tmp/' . $theExt['id'] . '.zip';
 		
@@ -89,8 +92,8 @@ class contentExtensionExtension_installerInstaller extends AdministrationPage
 		
 		// rename the ZIP file to the correct name
 		$finishedZipExtractPath = MANIFEST . '/tmp/' . $theExt['id'];
-		rename($zipExtractPath, $finishedZipExtractPath);
-		chmod($finishedZipExtractPath, 0777);
+		@rename($zipExtractPath, $finishedZipExtractPath);
+		@chmod($finishedZipExtractPath, 0777);
 
 		// copy the renamed folder to the extensions directory
 		self::recursiveCopy($finishedZipExtractPath, EXTENSIONS . '/' . $theExt['id']);
@@ -103,6 +106,15 @@ class contentExtensionExtension_installerInstaller extends AdministrationPage
 	/*
 		}
 	*/	
+		//$this->__showOutput($resultSuccess, $resultMessage);
+		
+		header("Location: " . SYMPHONY_URL . "/extension/extension_installer?id=" . $theExt['id'] . "&name=" . $theExt['title']);
+		
+	}
+	
+	private function __showOutput($resultSuccess, $resultMessage) {
+	
+	/*
 		$responseXml = new XMLElement('response');
 		
 		$responseXml->appendChild(new XMLElement("success", $resultSuccess));
@@ -112,8 +124,9 @@ class contentExtensionExtension_installerInstaller extends AdministrationPage
         $xslt->setXML($responseXml->generate());
         $xslt->setXSL(EXTENSIONS . '/extension_installer/content/installer.xsl', true);
         $this->Form->setValue($xslt->generate());
-        $this->Form->setAttribute('enctype', 'multipart/form-data');		
-		
+        $this->Form->setAttribute('enctype', 'multipart/form-data');	
+	*/
+	
 	}
 	
 	static function recursiveDelete($dir) {
