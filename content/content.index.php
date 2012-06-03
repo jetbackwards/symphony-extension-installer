@@ -51,7 +51,7 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 	private function __indexPage() {
 		
 		if(isset($_GET['id'])) {
-			if(!isset($_GET['err'])) {
+			if(isset($_GET['err'])) {
 				$this->pageAlert("Install of " . urldecode($_GET['name']) . " failed.", Alert::ERROR);
 			}
 			else {
