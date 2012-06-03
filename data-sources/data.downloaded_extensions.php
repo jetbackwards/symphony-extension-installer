@@ -6,11 +6,13 @@
 
 		public $dsParamROOTELEMENT = 'downloaded-extensions';
 
+		/*
 		public function __construct(&$parent, $env=NULL, $process_params=true){
 			parent::__construct($parent, $env, $process_params);
 			$this->_dependencies = array();
 		}
-
+		*/
+		
 		public function about(){
 			return array(
 				'name' => 'Downloaded Extensions',

@@ -51,7 +51,7 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 	private function __indexPage() {
 		
 		if(isset($_GET['id'])) {
-			if(!isset($_GET['err'])) {
+			if(isset($_GET['err'])) {
 				$this->pageAlert("Install of " . urldecode($_GET['name']) . " failed.", Alert::ERROR);
 			}
 			else {
@@ -59,10 +59,12 @@ class contentExtensionExtension_installerIndex extends AdministrationPage
 			}
 		}
 		
-		$extList = new datasourceextension_list(Administration::instance(), array());
+		//$extList = new datasourceextension_list(Administration::instance(), array());
+		$extList = new datasourceextension_list(array());
 		$extListXml = $extList->grab();
 		
-		$downList = new datasourcedownloaded_extensions(Administration::instance(), array());
+		//$downList = new datasourcedownloaded_extensions(Administration::instance(), array());
+		$downList = new datasourcedownloaded_extensions(array());
 		$downListXml = $downList->grab();
 
 		$xmlRoot = new XMLElement('root');

@@ -13,32 +13,14 @@
 		
 
 		
-
-		public function __construct(&$parent, $env=NULL, $process_params=true){
-			parent::__construct($parent, $env, $process_params);
+/*
+		public function __construct(array $env = null, $process_params=true){
+			//parent::__construct($env, $process_params);
 			$this->_dependencies = array();
 			
-			$urlParams = array();
 
-			
-			if(isset($_REQUEST['s'])) {
-				$urlParams["keywords"] = $_REQUEST['s'];
-			}
-			
-			if(isset($_REQUEST['p'])) {
-				$urlParams["page"] = $_REQUEST['p'];
-			}
-
-			
-			$paramStr = "";
-			foreach($urlParams as $k => $v) {
-				$paramStr .= $k . "=" . $v . "&";
-			}
-			$paramStr = substr($paramStr, 0, strlen($paramStr) - 1);
-			
-			$this->dsParamURL .= "?" . $paramStr;
 		}
-
+*/
 		
 		
 		
@@ -62,6 +44,26 @@
 		}
 
 		public function grab(&$param_pool=NULL){
+		
+			
+			$urlParams = array();
+			if(isset($_REQUEST['s'])) {
+				$urlParams["keywords"] = $_REQUEST['s'];
+			}
+			if(isset($_REQUEST['p'])) {
+				$urlParams["page"] = $_REQUEST['p'];
+			}
+			$paramStr = "";
+			foreach($urlParams as $k => $v) {
+				$paramStr .= $k . "=" . $v . "&";
+			}
+			$paramStr = substr($paramStr, 0, strlen($paramStr) - 1);
+			
+			$this->dsParamURL .= "?" . $paramStr;
+
+			
+			
+		
 			$result = new XMLElement($this->dsParamROOTELEMENT);
 
 			try{
